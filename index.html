@@ -732,6 +732,121 @@
       border-radius: 4px;
       width: 100%;
     }
+
+    /* Mobile Responsive Customizations */
+    @media (max-width: 768px) {
+      body {
+        padding: 0.75rem;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+
+      .logo-container {
+        justify-content: center;
+      }
+
+      .api-key-section {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.75rem;
+      }
+
+      .api-key-input-wrapper {
+        width: 100%;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      /* Stack form columns on mobile */
+      .form-row {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem;
+      }
+
+      /* Ensure dynamic filter grid works on mobile */
+      .filters-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.5rem;
+      }
+
+      /* Fit stats 2x2 on mobile */
+      .stats-summary-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem;
+      }
+
+      .stat-box {
+        padding: 0.75rem;
+      }
+
+      .stat-val {
+        font-size: 1.5rem;
+      }
+
+      /* Table control adjustments */
+      .history-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+      }
+
+      .history-controls {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+      }
+
+      .search-input {
+        grid-column: 1 / -1;
+        max-width: none;
+      }
+
+      .history-controls .btn {
+        width: 100%;
+      }
+
+      /* Prevent text wrapping in log tables */
+      table th, table td {
+        padding: 0.5rem 0.75rem;
+        white-space: nowrap;
+      }
+      
+      /* Review Scanned Matches inputs */
+      .scan-review-row input, .scan-review-row select {
+        min-width: 100px;
+      }
+      
+      .scan-checkbox {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .filters-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.5rem;
+      }
+    }
   </style>
 </head>
 <body>
