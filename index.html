@@ -10,6 +10,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     /* CSS Reset & Variables */
     :root {
@@ -1097,6 +1100,19 @@
           </div>
         </div>
 
+        <!-- Win Rate progression Chart Card -->
+        <div class="card" id="chartCard" style="display: none;">
+          <div class="card-title">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+            </svg>
+            Win Rate Progression
+          </div>
+          <div style="position: relative; height: 260px; width: 100%;">
+            <canvas id="winrateChart"></canvas>
+          </div>
+        </div>
+
         <!-- Match History Table Card -->
         <div class="card">
           <div class="history-header">
@@ -1581,6 +1597,9 @@
 
       // Render logs
       renderHistoryTable(filteredMatches);
+
+      // Render Progression Chart
+      renderWinrateChart(filteredMatches);
     }
 
     // Compute and display summary stat cards
@@ -2142,6 +2161,150 @@ JSON Schema:
       }
 
       cancelScanReview();
+    }
+
+    // Winrate change chart implementation using Chart.js
+    let myChart = null;
+
+    function renderWinrateChart(filteredMatches) {
+      const ctx = document.getElementById('winrateChart');
+      if (!ctx) return;
+      
+      const chartCard = document.getElementById('chartCard');
+      
+      if (filteredMatches.length === 0) {
+        chartCard.style.display = 'none';
+        return;
+      }
+      chartCard.style.display = 'block';
+
+      // Sort matches chronologically (oldest first) to show progression over time
+      const sorted = [...filteredMatches].sort((a, b) => new Date(a.time) - new Date(b.time));
+
+      const labels = [];
+      const winrates = [];
+      const tooltipData = []; // Extra metadata for Chart.js tooltips
+
+      let wins = 0;
+      let total = 0;
+
+      sorted.forEach((m, idx) => {
+        total++;
+        if (m.outcome === 'Victory') wins++;
+        const rate = Math.round((wins / total) * 100);
+        
+        labels.push(`#${total} ${m.map}`);
+        winrates.push(rate);
+        
+        tooltipData.push({
+          map: m.map,
+          mode: m.mode,
+          outcome: m.outcome,
+          score: m.score,
+          hero: m.hero || 'None',
+          duration: m.duration || 'N/A',
+          date: m.time ? new Date(m.time).toLocaleDateString() : 'N/A'
+        });
+      });
+
+      if (myChart) {
+        myChart.destroy();
+      }
+
+      myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Win Rate (%)',
+            data: winrates,
+            borderColor: '#f99e1a', // Overwatch Orange
+            backgroundColor: 'rgba(249, 158, 26, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.3,
+            pointBackgroundColor: '#fff',
+            pointBorderColor: '#f99e1a',
+            pointHoverRadius: 7,
+            pointHoverBackgroundColor: '#f99e1a',
+            pointHoverBorderColor: '#fff',
+            pointHoverBorderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              grid: {
+                color: 'rgba(255, 255, 255, 0.05)'
+              },
+              ticks: {
+                color: '#8e98a8',
+                font: {
+                  family: 'Inter',
+                  size: 10
+                }
+              }
+            },
+            y: {
+              min: 0,
+              max: 100,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.05)'
+              },
+              ticks: {
+                color: '#8e98a8',
+                callback: function(value) { return value + '%'; },
+                font: {
+                  family: 'Inter'
+                }
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: '#1b1d25',
+              titleColor: '#fff',
+              titleFont: {
+                family: 'Rajdhani',
+                weight: 'bold',
+                size: 14
+              },
+              bodyColor: '#a0aec0',
+              bodyFont: {
+                family: 'Inter',
+                size: 12
+              },
+              borderColor: 'rgba(249, 158, 26, 0.3)',
+              borderWidth: 1,
+              padding: 10,
+              displayColors: false,
+              callbacks: {
+                title: function(context) {
+                  const idx = context[0].dataIndex;
+                  const data = tooltipData[idx];
+                  return `${data.outcome === 'Victory' ? 'Victory' : 'Defeat'} - ${data.map} (${data.mode})`;
+                },
+                label: function(context) {
+                  const idx = context.dataIndex;
+                  const data = tooltipData[idx];
+                  return [
+                    `Win Rate: ${context.parsed.y}%`,
+                    `Score: ${data.score}`,
+                    `Hero Played: ${data.hero}`,
+                    `Duration: ${data.duration}`,
+                    `Recorded Date: ${data.date}`
+                  ];
+                }
+              }
+            }
+          }
+        }
+      });
     }
   </script>
 </body>
