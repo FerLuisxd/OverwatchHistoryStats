@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overwatch Match History Tracker</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* CSS Reset & Variables */
+    :root {
+      --bg-main: #0a0b0e;
+      --bg-card: #13151b;
+      --bg-card-hover: #1b1e27;
+      --bg-input: #1b1d25;
+      --border-color: rgba(255, 255, 255, 0.06);
+      --border-focus: #f99e1a;
+      --text-primary: #f5f6fa;
+      --text-secondary: #8e98a8;
+      --ow-orange: #f99e1a;
+      --ow-orange-hover: #ffb03a;
+      --ow-blue: #00aaff;
+      --victory-green: #2ec4b6;
+      --victory-bg: rgba(46, 196, 182, 0.1);
+      --defeat-red: #e71d36;
+      --defeat-bg: rgba(231, 29, 54, 0.1);
+      --transition-speed: 0.25s;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+      padding: 1.5rem;
+      min-height: 100vh;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-main);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #252836;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #33384c;
+    }
+
+    /* Container & Layout */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Header Bar */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      fill: var(--ow-orange);
+    }
+
+    h1 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #fff 0%, var(--ow-orange) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .api-key-section {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--bg-card);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .api-key-input-wrapper {
+      position: relative;
+    }
+
+    .api-key-status {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--defeat-red);
+    }
+
+    .api-key-status.configured {
+      background-color: var(--victory-green);
+      box-shadow: 0 0 8px var(--victory-green);
+    }
+
+    input[type="password"],
+    input[type="text"],
+    input[type="number"],
+    input[type="datetime-local"],
+    input[type="date"],
+    select {
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color var(--transition-speed);
+      width: 100%;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--ow-orange);
+      box-shadow: 0 0 0 2px rgba(249, 158, 26, 0.15);
+    }
+
+    .btn {
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .btn:hover {
+      background-color: var(--bg-card-hover);
+      border-color: var(--text-secondary);
+    }
+
+    .btn-primary {
+      background-color: var(--ow-orange);
+      border-color: var(--ow-orange);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--ow-orange-hover);
+      border-color: var(--ow-orange-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(249, 158, 26, 0.3);
+    }
+
+    .btn-danger {
+      background-color: transparent;
+      border-color: rgba(231, 29, 54, 0.3);
+      color: var(--defeat-red);
+    }
+
+    .btn-danger:hover {
+      background-color: var(--defeat-red);
+      border-color: var(--defeat-red);
+      color: #fff;
+    }
+
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Card Components */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .card-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--ow-orange);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.35rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Drag and Drop Zone */
+    .dropzone {
+      border: 2px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+      background-color: rgba(255, 255, 255, 0.01);
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--ow-orange);
+      background-color: rgba(249, 158, 26, 0.03);
+    }
+
+    .dropzone-icon {
+      width: 40px;
+      height: 40px;
+      fill: var(--text-secondary);
+      transition: fill var(--transition-speed);
+    }
+
+    .dropzone:hover .dropzone-icon {
+      fill: var(--ow-orange);
+    }
+
+    .dropzone p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .dropzone span {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .ocr-loader {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: rgba(249, 158, 26, 0.05);
+      border: 1px solid rgba(249, 158, 26, 0.2);
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(249, 158, 26, 0.2);
+      border-top-color: var(--ow-orange);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Mode & Outcome Selector Buttons */
+    .toggle-group {
+      display: flex;
+      gap: 0.5rem;
+      background: var(--bg-input);
+      padding: 0.25rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .toggle-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 0.4rem 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+      text-align: center;
+    }
+
+    .toggle-btn.active[data-val="QP"] {
+      background-color: var(--ow-blue);
+      color: #000;
+    }
+
+    .toggle-btn.active[data-val="Ranked"] {
+      background-color: var(--defeat-red);
+      color: #fff;
+    }
+
+    .toggle-btn.active[data-val="Other"] {
+      background-color: var(--text-secondary);
+      color: #000;
+    }
+
+    .toggle-btn.active[data-val="Victory"] {
+      background-color: var(--victory-green);
+      color: #000;
+    }
+
+    .toggle-btn.active[data-val="Defeat"] {
+      background-color: var(--defeat-red);
+      color: #fff;
+    }
+
+    /* Stats Dashboard widgets */
+    .stats-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.75rem;
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .stats-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-box {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-val {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .stat-val.win-rate {
+      color: var(--ow-orange);
+    }
+
+    /* Map Win Rate grid */
+    .map-stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    .map-stat-card {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-stat-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .map-stat-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .map-stat-count {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .map-stat-rate {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .map-stat-rate.high-win { color: var(--victory-green); }
+    .map-stat-rate.low-win { color: var(--defeat-red); }
+
+    .win-loss-progress-bar {
+      height: 6px;
+      width: 100%;
+      background: #252836;
+      border-radius: 3px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .win-segment {
+      height: 100%;
+      background-color: var(--victory-green);
+    }
+
+    .loss-segment {
+      height: 100%;
+      background-color: var(--defeat-red);
+    }
+
+    /* Hero Stats Section */
+    .hero-stats-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      max-height: 120px;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-stat-badge {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .hero-stat-winrate {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      color: var(--ow-orange);
+    }
+
+    /* Match History List */
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .history-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      max-width: 200px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background-color: var(--bg-input);
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: var(--bg-card-hover);
+    }
+
+    /* Outcome Badge */
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .badge-victory {
+      background-color: var(--victory-bg);
+      color: var(--victory-green);
+    }
+
+    .badge-defeat {
+      background-color: var(--defeat-bg);
+      color: var(--defeat-red);
+    }
+
+    .badge-mode {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .badge-mode.qp {
+      border-color: rgba(0, 170, 255, 0.3);
+      color: var(--ow-blue);
+      background: rgba(0, 170, 255, 0.05);
+    }
+
+    .badge-mode.ranked {
+      border-color: rgba(231, 29, 54, 0.3);
+      color: var(--defeat-red);
+      background: rgba(231, 29, 54, 0.05);
+    }
+
+    .hero-tag {
+      background: rgba(249, 158, 26, 0.1);
+      color: var(--ow-orange);
+      border: 1px solid rgba(249, 158, 26, 0.2);
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      background: #1e202c;
+      color: #fff;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border-left: 4px solid var(--ow-orange);
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success {
+      border-left-color: var(--victory-green);
+    }
+
+    .toast.error {
+      border-left-color: var(--defeat-red);
+    }
+
+    /* Form Flash Animation (from OCR filling) */
+    @keyframes flash {
+      0% { background-color: rgba(249, 158, 26, 0.4); }
+      100% { background-color: transparent; }
+    }
+
+    .flash-highlight {
+      animation: flash 1s ease-out;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-secondary);
+    }
+    
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      fill: rgba(255,255,255,0.1);
+      margin-bottom: 1rem;
+    }
+
+    /* Hero Recommendations */
+    .hero-recommend-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      margin-top: 0.35rem;
+    }
+
+    .hero-rec-btn {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+    }
+
+    .hero-rec-btn:hover {
+      background: var(--ow-orange);
+      color: #000;
+      border-color: var(--ow-orange);
+    }
+
+    /* Scan Review Modal/Panel Styling */
+    #scanReviewCard {
+      border: 1px solid rgba(249, 158, 26, 0.3);
+      box-shadow: 0 4px 20px rgba(249, 158, 26, 0.15);
+      background-color: #171a24;
+    }
+
+    .scan-review-row input, .scan-review-row select {
+      background: var(--bg-main);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.25rem;
+      font-size: 0.85rem;
+      border-radius: 4px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="logo-container">
+        <!-- SVG Overwatch Logo -->
+        <svg class="logo-icon" viewBox="0 0 32 32">
+          <path d="M16 0C7.16 0 0 7.16 0 16c0 3.73 1.28 7.16 3.41 9.91l4.88-5.78C6.91 18.78 6.19 17.47 6.09 16c-.03-.41.03-1.78.22-2.19l9.69-4.22 9.69 4.22c.19.41.25 1.78.22 2.19-.1 1.47-.81 2.78-2.2 4.12l4.88 5.78C30.72 23.16 32 19.73 32 16c0-8.84-7.16-16-16-16zm-5.91 16.59c0-1.44 1.16-2.59 2.59-2.59h6.66c1.44 0 2.59 1.16 2.59 2.59v3.06l-5.92 7.02-5.92-7.02v-3.06z"/>
+        </svg>
+        <h1>Overwatch History Tracker</h1>
+      </div>
+
+      <div class="api-key-section">
+        <span id="apiKeyIndicator" class="api-key-status"></span>
+        <div class="api-key-input-wrapper">
+          <input type="password" id="groqApiKeyInput" placeholder="Groq API Key" title="Enter Groq API Key to enable OCR scanner">
+        </div>
+        <button class="btn" id="saveKeyBtn" onclick="saveApiKey()">Save</button>
+      </div>
+    </header>
+
+    <!-- Scan Results Review Card (shown when matches scanned) -->
+    <div class="card" id="scanReviewCard" style="display: none;">
+      <div class="card-title">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        Review Scanned Matches
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+        Review the matches extracted from your screenshot. You can tweak fields, choose which hero you played, and selectively import them below.
+      </p>
+      <div class="table-container" style="margin-bottom: 1rem; max-height: 350px; overflow-y: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 40px;"><input type="checkbox" id="selectAllScan" checked onchange="toggleSelectAllScan(this)"></th>
+              <th>Map</th>
+              <th style="width: 110px;">Mode</th>
+              <th style="width: 110px;">Outcome</th>
+              <th style="width: 90px;">Result Score</th>
+              <th style="width: 90px;">Duration</th>
+              <th style="width: 140px;">Hero Played</th>
+            </tr>
+          </thead>
+          <tbody id="scanReviewTableBody">
+            <!-- Populated via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <label for="scanSeasonInput" style="margin-bottom: 0;">Import Season:</label>
+          <input type="number" id="scanSeasonInput" style="width: 80px;" min="1">
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn" onclick="cancelScanReview()">Cancel</button>
+          <button class="btn btn-primary" onclick="importScannedMatches()">Import Selected (<span id="scanCountText">0</span>)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      
+      <!-- LEFT COLUMN: Forms / Uploads -->
+      <aside>
+        <!-- OCR Scanner Card -->
+        <div class="card">
+          <div class="card-title">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h3V2H4c-1.1 0-2 .9-2 2v3h2V4zm12-2h3c1.1 0 2 .9 2 2v3h-2V4h-3V2zM4 16H2v3c0 1.1.9 2 2 2h3v-2H4v-3zm16 3h-3v2h3c1.1 0 2-.9 2-2v-3h-2v3zm-8-9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zm6.3 3c-.18-3.33-2.82-5.97-6.15-6.15V5h-2v1.85C6.82 7.03 4.18 9.67 4 13H2v2h2c.18 3.33 2.82 5.97 6.15 6.15V23h2v-1.85c3.33-.18 5.97-2.82 6.15-6.15h2v-2h-2z"/></svg>
+            Scan Screenshot
+          </div>
+          
+          <div class="dropzone" id="dropzone">
+            <svg class="dropzone-icon" viewBox="0 0 24 24">
+              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+            </svg>
+            <p>Drag & Drop match screenshot</p>
+            <span>or click to browse</span>
+          </div>
+          <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFileSelect(event)">
+
+          <div class="ocr-loader" id="ocrLoader">
+            <div class="spinner"></div>
+            <span>Querying Groq OCR...</span>
+          </div>
+        </div>
+
+        <!-- Add/Edit Match (Manual / OCR review) -->
+        <div class="card">
+          <div class="card-title">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            <span id="formCardTitle">Track Match</span>
+          </div>
+
+          <form id="matchForm" onsubmit="handleFormSubmit(event)">
+            <div class="form-group">
+              <label for="formMap">Map</label>
+              <input type="text" id="formMap" placeholder="e.g. King's Row" required list="mapList">
+              <datalist id="mapList"></datalist>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Game Mode</label>
+                <div class="toggle-group" id="formModeGroup">
+                  <button type="button" class="toggle-btn active" data-val="Ranked" onclick="setFormMode('Ranked')">Ranked</button>
+                  <button type="button" class="toggle-btn" data-val="QP" onclick="setFormMode('QP')">QP</button>
+                  <button type="button" class="toggle-btn" data-val="Other" onclick="setFormMode('Other')">Other</button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Outcome</label>
+                <div class="toggle-group" id="formOutcomeGroup">
+                  <button type="button" class="toggle-btn active" data-val="Victory" onclick="setFormOutcome('Victory')">Win</button>
+                  <button type="button" class="toggle-btn" data-val="Defeat" onclick="setFormOutcome('Defeat')">Loss</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+              <div class="form-group">
+                <label for="formScore">Result</label>
+                <input type="text" id="formScore" placeholder="e.g. 3-2" required>
+              </div>
+
+              <div class="form-group">
+                <label for="formDuration">Duration</label>
+                <input type="text" id="formDuration" placeholder="e.g. 8:46" required>
+              </div>
+
+              <div class="form-group">
+                <label for="formSeason">Season</label>
+                <input type="number" id="formSeason" placeholder="e.g. 13" min="1" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="formTime">Time Recorded</label>
+                <input type="datetime-local" id="formTime" required>
+              </div>
+
+              <div class="form-group">
+                <label for="formHero">Hero Played</label>
+                <input type="text" id="formHero" placeholder="e.g. Ana" list="heroList">
+                <datalist id="heroList"></datalist>
+                
+                <div class="hero-recommend-list" id="heroRecommendations">
+                  <!-- JS populated -->
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+              <button type="button" id="cancelEditBtn" class="btn btn-danger" style="display: none; flex: 1;" onclick="resetForm()">
+                Cancel
+              </button>
+              <button type="submit" id="submitBtn" class="btn btn-primary" style="flex: 2; padding: 0.75rem;">
+                Save Match History
+              </button>
+            </div>
+          </form>
+        </div>
+      </aside>
+
+      <!-- RIGHT COLUMN: Stats & History -->
+      <main>
+        <!-- Statistics Section -->
+        <div class="card">
+          <div class="stats-header-bar" style="border-bottom: none; margin-bottom: 0.5rem; padding-bottom: 0;">
+            <div class="card-title" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+              Match Analysis
+            </div>
+          </div>
+
+          <!-- Extended Filter Grid -->
+          <div class="filters-grid" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
+            <div>
+              <label for="filterSeason">Season</label>
+              <select id="filterSeason" onchange="updateDashboard()">
+                <option value="all">All Seasons</option>
+              </select>
+            </div>
+            <div>
+              <label for="filterMode">Mode</label>
+              <select id="filterMode" onchange="updateDashboard()">
+                <option value="all">All Modes</option>
+                <option value="Ranked">Ranked Only</option>
+                <option value="QP">QP Only</option>
+                <option value="Other">Other Only</option>
+              </select>
+            </div>
+            <div>
+              <label for="filterMap">Map Filter</label>
+              <select id="filterMap" onchange="updateDashboard()">
+                <option value="all">All Maps</option>
+              </select>
+            </div>
+            <div>
+              <label for="filterHero">Hero Filter</label>
+              <select id="filterHero" onchange="updateDashboard()">
+                <option value="all">All Heroes</option>
+              </select>
+            </div>
+            <div>
+              <label for="filterDateStart">Start Date</label>
+              <input type="date" id="filterDateStart" onchange="updateDashboard()">
+            </div>
+            <div>
+              <label for="filterDateEnd">End Date</label>
+              <input type="date" id="filterDateEnd" onchange="updateDashboard()">
+            </div>
+          </div>
+
+          <!-- Quick Stats Cards -->
+          <div class="stats-summary-grid">
+            <div class="stat-box">
+              <div class="stat-label">Total Matches</div>
+              <div class="stat-val" id="statTotalMatches">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Win Rate</div>
+              <div class="stat-val win-rate" id="statWinRate">0%</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Wins</div>
+              <div class="stat-val" id="statWins" style="color: var(--victory-green);">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Losses</div>
+              <div class="stat-val" id="statLosses" style="color: var(--defeat-red);">0</div>
+            </div>
+          </div>
+
+          <!-- Map Win Rate Breakdowns -->
+          <h3 style="font-size: 1rem; margin-bottom: 0.75rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px;">Map Win Rates</h3>
+          <div class="map-stats-container" id="mapStatsContainer">
+            <!-- JS populated -->
+          </div>
+
+          <!-- Hero Played Stats -->
+          <h3 style="font-size: 1rem; margin: 1.25rem 0 0.75rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px;">Hero Performance</h3>
+          <div class="hero-stats-container" id="heroStatsContainer">
+            <!-- JS populated -->
+          </div>
+        </div>
+
+        <!-- Match History Table Card -->
+        <div class="card">
+          <div class="history-header">
+            <div class="card-title" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+              Match History Log
+            </div>
+
+            <div class="history-controls">
+              <input type="text" id="historySearch" class="search-input" placeholder="Search Map or Hero..." oninput="updateDashboard()">
+              
+              <button class="btn" onclick="exportMatches()" title="Export match history to JSON">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+                Export
+              </button>
+
+              <button class="btn" onclick="document.getElementById('importInput').click()" title="Import match history from JSON">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 15l-7-7-7 7h4v3h6v-3h4z"/></svg>
+                Import
+              </button>
+              <input type="file" id="importInput" accept=".json" style="display:none" onchange="importMatches(event)">
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table id="matchesTable">
+              <thead>
+                <tr>
+                  <th>Time Recorded</th>
+                  <th>Season</th>
+                  <th>Map</th>
+                  <th>Mode</th>
+                  <th>Outcome</th>
+                  <th>Score/Result</th>
+                  <th>Duration</th>
+                  <th>Hero</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="matchesTableBody">
+                <!-- JS populated -->
+              </tbody>
+            </table>
+            <div id="emptyHistoryState" class="empty-state">
+              <svg viewBox="0 0 24 24">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2z"/>
+              </svg>
+              <p>No matches recorded yet</p>
+              <span style="font-size: 0.8rem;">Add a match manually or upload a screenshot to begin tracking.</span>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast Element -->
+  <div class="toast" id="toast">
+    <span id="toastMessage">Match Saved!</span>
+  </div>
+
+  <script>
+    // List of standard Overwatch 2 maps for datalist autocomplete
+    const OW_MAPS = [
+      "Blizzard World", "Busan", "Circuit Royal", "Colosseo", "Dorado", "Eichenwalde", 
+      "Esperança", "Hanaoka", "Havana", "Hollywood", "Ilios", "Junkertown", 
+      "King's Row", "Lijiang Tower", "Midtown", "Nepal", "New Junk City", "New Queen Street", 
+      "Numbani", "Oasis", "Paraíso", "Peninsula", "Rialto", "Route 66", "Runasapi", 
+      "Samoa", "Shambali Monastery", "Suravasa", "Throne of Anubis", "Watchpoint: Gibraltar"
+    ];
+
+    // List of standard Overwatch 2 heroes
+    const OW_HEROES = [
+      "Ana", "Ashe", "Baptiste", "Bastion", "Brigitte", "Cassidy", "D.Va", "Doomfist", 
+      "Echo", "Genji", "Hanzo", "Illari", "Jumper Queen", "Juno", "Junkrat", "Kiriko", 
+      "Lifeweaver", "Lúcio", "Mauga", "Mei", "Mercy", "Moira", "Orisa", "Pharah", 
+      "Ramattra", "Reaper", "Reinhardt", "Roadhog", "Sigma", "Sojourn", "Soldier: 76", 
+      "Sombra", "Symmetra", "Torbjörn", "Tracer", "Venture", "Widowmaker", "Winston", 
+      "Wrecking Ball", "Zarya", "Zenyatta"
+    ];
+
+    // State Variables
+    let matches = {};
+    let activeFormMode = 'Ranked';
+    let activeFormOutcome = 'Victory';
+    let currentSeason = 13; // Default starting season
+    let editingKey = null; // Key of the match currently being edited
+    let scannedMatches = []; // Holds the list of matches extracted by the current scan
+
+    // On Document Load
+    document.addEventListener("DOMContentLoaded", () => {
+      // Load Matches from Local Storage
+      const storedMatches = localStorage.getItem('ow_tracker_matches');
+      if (storedMatches) {
+        try {
+          matches = JSON.parse(storedMatches);
+        } catch (e) {
+          console.error("Error parsing stored matches", e);
+          matches = {};
+        }
+      }
+
+      // Load Season
+      const storedSeason = localStorage.getItem('ow_tracker_current_season');
+      if (storedSeason) {
+        currentSeason = parseInt(storedSeason) || 13;
+      }
+      document.getElementById('formSeason').value = currentSeason;
+      document.getElementById('scanSeasonInput').value = currentSeason;
+
+      // Load API Key
+      const storedKey = localStorage.getItem('ow_tracker_groq_key');
+      if (storedKey) {
+        document.getElementById('groqApiKeyInput').value = storedKey;
+        updateKeyIndicator(true);
+      } else {
+        updateKeyIndicator(false);
+      }
+
+      // Set default time to now
+      setDefaultTime();
+
+      // Populate Datalists
+      populateDatalists();
+
+      // Update UI Views
+      updateDashboard();
+
+      // Setup Drag & Drop listeners
+      setupDragAndDrop();
+    });
+
+    // Populate Autocomplete maps and heroes lists
+    function populateDatalists() {
+      const mapList = document.getElementById('mapList');
+      mapList.innerHTML = OW_MAPS.map(map => `<option value="${map}">`).join('');
+
+      const heroList = document.getElementById('heroList');
+      heroList.innerHTML = OW_HEROES.map(hero => `<option value="${hero}">`).join('');
+
+      // Popular/recent heroes suggestion listing
+      renderHeroRecommendations();
+    }
+
+    // Pre-populate hero recommendations based on frequent play
+    function renderHeroRecommendations() {
+      const recContainer = document.getElementById('heroRecommendations');
+      
+      // Calculate most played heroes
+      const heroCounts = {};
+      Object.values(matches).forEach(m => {
+        if (m.hero) {
+          heroCounts[m.hero] = (heroCounts[m.hero] || 0) + 1;
+        }
+      });
+
+      // Get top 4 heroes or fallback to popular support/tank/damage defaults
+      let topHeroes = Object.keys(heroCounts).sort((a,b) => heroCounts[b] - heroCounts[a]).slice(0, 4);
+      if (topHeroes.length === 0) {
+        topHeroes = ["Ana", "Reinhardt", "Genji", "Tracer"];
+      }
+
+      recContainer.innerHTML = topHeroes.map(hero => 
+        `<button type="button" class="hero-rec-btn" onclick="selectHero('${hero}')">${hero}</button>`
+      ).join('');
+    }
+
+    function selectHero(heroName) {
+      document.getElementById('formHero').value = heroName;
+    }
+
+    // Set form datetime to local current time
+    function setDefaultTime() {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      document.getElementById('formTime').value = now.toISOString().slice(0, 16);
+    }
+
+    // Save/Update API Key
+    function saveApiKey() {
+      const key = document.getElementById('groqApiKeyInput').value.trim();
+      if (key) {
+        localStorage.setItem('ow_tracker_groq_key', key);
+        updateKeyIndicator(true);
+        showToast("Groq API Key saved successfully", "success");
+      } else {
+        localStorage.removeItem('ow_tracker_groq_key');
+        updateKeyIndicator(false);
+        showToast("Groq API Key cleared", "error");
+      }
+    }
+
+    function updateKeyIndicator(isConfigured) {
+      const indicator = document.getElementById('apiKeyIndicator');
+      if (isConfigured) {
+        indicator.className = "api-key-status configured";
+        indicator.title = "Groq API Key Configured";
+      } else {
+        indicator.className = "api-key-status";
+        indicator.title = "Groq API Key Missing";
+      }
+    }
+
+    // UI Helper - Toast Notifications
+    function showToast(message, type = "success") {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toastMessage');
+      toastMessage.innerText = message;
+      toast.className = `toast show ${type}`;
+      setTimeout(() => {
+        toast.className = 'toast';
+      }, 3500);
+    }
+
+    // Form Mode Toggles
+    function setFormMode(mode) {
+      activeFormMode = mode;
+      const buttons = document.querySelectorAll('#formModeGroup .toggle-btn');
+      buttons.forEach(btn => {
+        if (btn.getAttribute('data-val') === mode) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    // Form Outcome Toggles
+    function setFormOutcome(outcome) {
+      activeFormOutcome = outcome;
+      const buttons = document.querySelectorAll('#formOutcomeGroup .toggle-btn');
+      buttons.forEach(btn => {
+        if (btn.getAttribute('data-val') === outcome) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    // Key generation for deduplication based on Base64
+    // Using static properties (Map, Mode, Duration, Outcome, Score, Season) WITHOUT the time field
+    // so that scanning the same screenshot tomorrow detects the exact same key.
+    function generateMatchKey(match) {
+      const mapClean = (match.map || '').trim().toLowerCase();
+      const modeClean = (match.mode || '').trim().toLowerCase();
+      const durationClean = (match.duration || '').trim().toLowerCase();
+      const outcomeClean = (match.outcome || '').trim().toLowerCase();
+      const scoreClean = (match.score || '').trim().toLowerCase();
+      const seasonClean = String(match.season || '').trim().toLowerCase();
+      
+      // Mix all properties
+      const rawString = `${mapClean}|${modeClean}|${durationClean}|${outcomeClean}|${scoreClean}|${seasonClean}`;
+      
+      // Standard safe base64 encoding (string64)
+      return btoa(unescape(encodeURIComponent(rawString)));
+    }
+
+    // Handle Manual Add Match Submit (or Update Match Submit)
+    function handleFormSubmit(e) {
+      e.preventDefault();
+
+      const map = document.getElementById('formMap').value.trim();
+      const score = document.getElementById('formScore').value.trim();
+      const duration = document.getElementById('formDuration').value.trim();
+      const time = document.getElementById('formTime').value;
+      const season = parseInt(document.getElementById('formSeason').value) || currentSeason;
+      const hero = document.getElementById('formHero').value.trim();
+
+      if (!map || !score || !duration || !time) {
+        showToast("Please fill in Map, Score, Duration, and Time.", "error");
+        return;
+      }
+
+      const matchData = {
+        map: map,
+        mode: activeFormMode,
+        outcome: activeFormOutcome,
+        score: score,
+        duration: duration,
+        season: season,
+        time: time,
+        hero: hero
+      };
+
+      const matchKey = generateMatchKey(matchData);
+
+      if (editingKey) {
+        // If the key has changed, check if the new key already exists in our dictionary
+        if (matchKey !== editingKey && matches[matchKey]) {
+          showToast("Duplicate detected: Another match already has identical properties!", "error");
+          return;
+        }
+        
+        // Remove old entry if key changed
+        if (matchKey !== editingKey) {
+          delete matches[editingKey];
+        }
+        
+        matches[matchKey] = matchData;
+        showToast("Match successfully updated!", "success");
+      } else {
+        // Check if match already exists
+        if (matches[matchKey]) {
+          showToast("Duplicate detected: This match is already tracked!", "error");
+          return;
+        }
+
+        // Add to matches
+        matches[matchKey] = matchData;
+        showToast("Match successfully tracked!", "success");
+      }
+
+      // Save local storage
+      saveMatchesToLocalStorage();
+
+      // If season was modified, update local storage state for future default entries
+      if (season !== currentSeason) {
+        currentSeason = season;
+        localStorage.setItem('ow_tracker_current_season', currentSeason);
+        document.getElementById('scanSeasonInput').value = currentSeason;
+      }
+
+      // Reset form
+      resetForm();
+
+      // Refresh Stats and History View
+      updateDashboard();
+    }
+
+    // Reset Form to empty defaults
+    function resetForm() {
+      document.getElementById('formMap').value = '';
+      document.getElementById('formScore').value = '';
+      document.getElementById('formDuration').value = '';
+      document.getElementById('formHero').value = '';
+      setDefaultTime();
+      renderHeroRecommendations();
+
+      editingKey = null;
+      document.getElementById('formCardTitle').innerText = 'Track Match';
+      document.getElementById('submitBtn').innerText = 'Save Match History';
+      document.getElementById('cancelEditBtn').style.display = 'none';
+    }
+
+    // Populate the form to begin editing an existing match
+    function startEditMatch(key) {
+      const m = matches[key];
+      if (!m) return;
+
+      document.getElementById('formMap').value = m.map;
+      setFormMode(m.mode);
+      setFormOutcome(m.outcome);
+      document.getElementById('formScore').value = m.score;
+      document.getElementById('formDuration').value = m.duration || '';
+      document.getElementById('formSeason').value = m.season;
+      
+      // Convert stored datetime to datetime-local friendly format
+      if (m.time) {
+        document.getElementById('formTime').value = m.time.substring(0, 16);
+      }
+      
+      document.getElementById('formHero').value = m.hero || '';
+
+      editingKey = key;
+      document.getElementById('formCardTitle').innerText = 'Edit Tracked Match';
+      document.getElementById('submitBtn').innerText = 'Update Match';
+      document.getElementById('cancelEditBtn').style.display = 'inline-flex';
+
+      // Scroll form into view
+      document.getElementById('matchForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Save state helper
+    function saveMatchesToLocalStorage() {
+      localStorage.setItem('ow_tracker_matches', JSON.stringify(matches));
+    }
+
+    // Delete single match
+    function deleteMatch(key) {
+      if (confirm("Are you sure you want to delete this match history record?")) {
+        delete matches[key];
+        saveMatchesToLocalStorage();
+        updateDashboard();
+        showToast("Match deleted", "error");
+      }
+    }
+
+    // Populate filter select options dynamically based on tracked history
+    function populateFilterDropdowns() {
+      const matchArray = Object.values(matches);
+
+      // Unique Maps
+      const mapsSet = new Set();
+      matchArray.forEach(m => { if (m.map) mapsSet.add(m.map); });
+      const mapSelect = document.getElementById('filterMap');
+      const prevMap = mapSelect.value;
+      mapSelect.innerHTML = '<option value="all">All Maps</option>';
+      Array.from(mapsSet).sort().forEach(mapName => {
+        mapSelect.innerHTML += `<option value="${mapName}">${mapName}</option>`;
+      });
+      if (mapsSet.has(prevMap) || prevMap === 'all') {
+        mapSelect.value = prevMap;
+      }
+
+      // Unique Heroes
+      const heroesSet = new Set();
+      matchArray.forEach(m => { if (m.hero) heroesSet.add(m.hero); });
+      const heroSelect = document.getElementById('filterHero');
+      const prevHero = heroSelect.value;
+      heroSelect.innerHTML = '<option value="all">All Heroes</option>';
+      Array.from(heroesSet).sort().forEach(heroName => {
+        heroSelect.innerHTML += `<option value="${heroName}">${heroName}</option>`;
+      });
+      if (heroesSet.has(prevHero) || prevHero === 'all') {
+        heroSelect.value = prevHero;
+      }
+    }
+
+    // Calculate lists & stats, update tables and dropdown selections
+    function updateDashboard() {
+      const matchArray = Object.entries(matches).map(([key, data]) => ({ key, ...data }));
+      
+      // Gather all unique seasons to populate season list
+      const seasonsSet = new Set();
+      matchArray.forEach(m => {
+        if (m.season) seasonsSet.add(m.season);
+      });
+      
+      const filterSeasonSelect = document.getElementById('filterSeason');
+      const prevSelectedSeason = filterSeasonSelect.value;
+      
+      filterSeasonSelect.innerHTML = '<option value="all">All Seasons</option>';
+      const sortedSeasons = Array.from(seasonsSet).sort((a,b) => b - a);
+      sortedSeasons.forEach(seasonNum => {
+        filterSeasonSelect.innerHTML += `<option value="${seasonNum}">Season ${seasonNum}</option>`;
+      });
+      if (Array.from(seasonsSet).map(String).includes(prevSelectedSeason) || prevSelectedSeason === 'all') {
+        filterSeasonSelect.value = prevSelectedSeason;
+      }
+
+      // Populate maps and heroes dropdown options based on current history database
+      populateFilterDropdowns();
+
+      // Read filter values
+      const activeSeasonFilter = filterSeasonSelect.value;
+      const activeModeFilter = document.getElementById('filterMode').value;
+      const activeMapFilter = document.getElementById('filterMap').value;
+      const activeHeroFilter = document.getElementById('filterHero').value;
+      const startDateVal = document.getElementById('filterDateStart').value;
+      const endDateVal = document.getElementById('filterDateEnd').value;
+      const searchQuery = document.getElementById('historySearch').value.toLowerCase().trim();
+
+      // Filter Matches for Analysis & History logs
+      const filteredMatches = matchArray.filter(m => {
+        // Season filter
+        const matchesSeason = activeSeasonFilter === 'all' || String(m.season) === activeSeasonFilter;
+        // Mode filter
+        const matchesMode = activeModeFilter === 'all' || m.mode === activeModeFilter;
+        // Map filter
+        const matchesMap = activeMapFilter === 'all' || m.map === activeMapFilter;
+        // Hero filter
+        const matchesHero = activeHeroFilter === 'all' || m.hero === activeHeroFilter;
+        
+        // Date Range filters
+        const matchDateString = m.time ? m.time.substring(0, 10) : '';
+        const matchesStartDate = !startDateVal || matchDateString >= startDateVal;
+        const matchesEndDate = !endDateVal || matchDateString <= endDateVal;
+        
+        // General text search filter (search bar)
+        const matchesSearch = !searchQuery || 
+                              (m.map || '').toLowerCase().includes(searchQuery) || 
+                              (m.hero || '').toLowerCase().includes(searchQuery);
+
+        return matchesSeason && matchesMode && matchesMap && matchesHero && matchesStartDate && matchesEndDate && matchesSearch;
+      });
+
+      // Stats are computed on the same filtered subset
+      renderSummaryMetrics(filteredMatches);
+      renderMapWinRates(filteredMatches);
+      renderHeroPerformance(filteredMatches);
+
+      // Render logs
+      renderHistoryTable(filteredMatches);
+    }
+
+    // Compute and display summary stat cards
+    function renderSummaryMetrics(statsMatches) {
+      const total = statsMatches.length;
+      let wins = 0;
+      let losses = 0;
+
+      statsMatches.forEach(m => {
+        if (m.outcome === 'Victory') wins++;
+        else if (m.outcome === 'Defeat') losses++;
+      });
+
+      const winRate = total > 0 ? Math.round((wins / total) * 100) : 0;
+
+      document.getElementById('statTotalMatches').innerText = total;
+      document.getElementById('statWinRate').innerText = `${winRate}%`;
+      document.getElementById('statWins').innerText = wins;
+      document.getElementById('statLosses').innerText = losses;
+    }
+
+    // Compute and display map lists & individual win rates
+    function renderMapWinRates(statsMatches) {
+      const mapData = {};
+
+      statsMatches.forEach(m => {
+        const mapName = m.map || 'Unknown Map';
+        if (!mapData[mapName]) {
+          mapData[mapName] = { wins: 0, losses: 0, total: 0 };
+        }
+        mapData[mapName].total++;
+        if (m.outcome === 'Victory') mapData[mapName].wins++;
+        else if (m.outcome === 'Defeat') mapData[mapName].losses++;
+      });
+
+      const sortedMaps = Object.entries(mapData).sort((a, b) => b[1].total - a[1].total);
+      const container = document.getElementById('mapStatsContainer');
+
+      if (sortedMaps.length === 0) {
+        container.innerHTML = '<div style="color: var(--text-secondary); font-size: 0.85rem; grid-column: 1/-1;">No map statistics available.</div>';
+        return;
+      }
+
+      container.innerHTML = sortedMaps.map(([mapName, data]) => {
+        const rate = Math.round((data.wins / data.total) * 100);
+        const winPercent = data.total > 0 ? (data.wins / data.total) * 100 : 0;
+        const lossPercent = data.total > 0 ? (data.losses / data.total) * 100 : 0;
+        
+        let winRateClass = '';
+        if (rate >= 60) winRateClass = 'high-win';
+        if (rate <= 40) winRateClass = 'low-win';
+
+        return `
+          <div class="map-stat-card">
+            <div class="map-stat-title-row">
+              <span class="map-stat-name">${mapName}</span>
+              <span class="map-stat-rate ${winRateClass}">${rate}% WR</span>
+            </div>
+            <div class="map-stat-title-row">
+              <span class="map-stat-count">${data.total} Played (${data.wins}W - ${data.losses}L)</span>
+            </div>
+            <div class="win-loss-progress-bar">
+              <div class="win-segment" style="width: ${winPercent}%"></div>
+              <div class="loss-segment" style="width: ${lossPercent}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Compute hero performance lists
+    function renderHeroPerformance(statsMatches) {
+      const heroData = {};
+      statsMatches.forEach(m => {
+        if (!m.hero) return;
+        const hero = m.hero;
+        if (!heroData[hero]) {
+          heroData[hero] = { wins: 0, losses: 0, total: 0 };
+        }
+        heroData[hero].total++;
+        if (m.outcome === 'Victory') heroData[hero].wins++;
+        else if (m.outcome === 'Defeat') heroData[hero].losses++;
+      });
+
+      const sortedHeroes = Object.entries(heroData).sort((a,b) => b[1].total - a[1].total);
+      const container = document.getElementById('heroStatsContainer');
+
+      if (sortedHeroes.length === 0) {
+        container.innerHTML = '<div style="color: var(--text-secondary); font-size: 0.85rem;">No hero statistics available.</div>';
+        return;
+      }
+
+      container.innerHTML = sortedHeroes.map(([heroName, data]) => {
+        const wr = Math.round((data.wins / data.total) * 100);
+        return `
+          <div class="hero-stat-badge">
+            <span style="font-weight:600">${heroName}</span>
+            <span style="color: var(--text-secondary); font-size:0.75rem">${data.total} GP</span>
+            <span class="hero-stat-winrate">${wr}% WR</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Render Table Logs
+    function renderHistoryTable(filteredMatches) {
+      const tbody = document.getElementById('matchesTableBody');
+      const emptyState = document.getElementById('emptyHistoryState');
+
+      if (filteredMatches.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      // Sort matches by time, descending (newest matches first)
+      const sortedMatches = filteredMatches.sort((a,b) => new Date(b.time) - new Date(a.time));
+
+      tbody.innerHTML = sortedMatches.map(m => {
+        const matchDate = new Date(m.time);
+        const formattedDate = matchDate.toLocaleDateString() + ' ' + matchDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        const outcomeBadge = m.outcome === 'Victory' 
+          ? `<span class="badge badge-victory">Victory</span>` 
+          : `<span class="badge badge-defeat">Defeat</span>`;
+
+        const modeClass = m.mode === 'Ranked' ? 'ranked' : (m.mode === 'QP' ? 'qp' : '');
+        const modeBadge = `<span class="badge badge-mode ${modeClass}">${m.mode}</span>`;
+
+        const heroContent = m.hero ? `<span class="hero-tag">${m.hero}</span>` : `<span style="color: var(--text-secondary); font-style: italic;">None</span>`;
+
+        return `
+          <tr>
+            <td style="white-space: nowrap;">${formattedDate}</td>
+            <td style="font-family: 'Rajdhani', sans-serif; font-weight:700">Season ${m.season}</td>
+            <td style="font-weight: 600;">${m.map}</td>
+            <td>${modeBadge}</td>
+            <td>${outcomeBadge}</td>
+            <td style="font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size:1.05rem;">${m.score}</td>
+            <td>${m.duration || '--'}</td>
+            <td>${heroContent}</td>
+            <td style="text-align: right; white-space: nowrap;">
+              <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-right: 0.25rem;" onclick="startEditMatch('${m.key}')">
+                Edit
+              </button>
+              <button class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="deleteMatch('${m.key}')">
+                Delete
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // JSON Export
+    function exportMatches() {
+      if (Object.keys(matches).length === 0) {
+        showToast("No matches to export!", "error");
+        return;
+      }
+      
+      const jsonStr = JSON.stringify(matches, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `overwatch_matches_history_season_${currentSeason}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showToast("Match history exported!", "success");
+    }
+
+    // JSON Import
+    function importMatches(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (typeof imported !== 'object' || imported === null) {
+            throw new Error("Invalid file content format. Should be object dictionary.");
+          }
+
+          let addedCount = 0;
+          let skipCount = 0;
+
+          Object.keys(imported).forEach(key => {
+            const data = imported[key];
+            
+            // Basic validation
+            if (data.map && data.mode && data.outcome && data.score) {
+              // Normalize outcome values on import
+              let rawOutcome = data.outcome;
+              let finalOutcome = 'Defeat';
+              if (rawOutcome === 'Victory' || rawOutcome === '勝利' || rawOutcome === 'Win') {
+                finalOutcome = 'Victory';
+              }
+
+              const cleanedMatch = {
+                map: data.map,
+                mode: data.mode,
+                outcome: finalOutcome,
+                score: data.score,
+                duration: data.duration || '',
+                season: parseInt(data.season) || currentSeason,
+                time: data.time || new Date().toISOString(),
+                hero: data.hero || ''
+              };
+
+              // Re-generate key to ensure format consistency
+              const finalKey = generateMatchKey(cleanedMatch);
+
+              if (!matches[finalKey]) {
+                matches[finalKey] = cleanedMatch;
+                addedCount++;
+              } else {
+                skipCount++;
+              }
+            }
+          });
+
+          if (addedCount > 0) {
+            saveMatchesToLocalStorage();
+            updateDashboard();
+            showToast(`Import completed: ${addedCount} added, ${skipCount} duplicates skipped.`, "success");
+          } else {
+            showToast(`No new matches imported. ${skipCount} duplicates skipped.`, "error");
+          }
+        } catch (err) {
+          showToast("Failed to import JSON: " + err.message, "error");
+        }
+        // reset input value so it can trigger change event again
+        document.getElementById('importInput').value = '';
+      };
+      reader.readAsText(file);
+    }
+
+    // Drag and Drop Zone Implementation
+    function setupDragAndDrop() {
+      const dropzone = document.getElementById('dropzone');
+
+      // Click to browse file input
+      dropzone.addEventListener('click', (e) => {
+        document.getElementById('fileInput').click();
+      });
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.add('dragover');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.remove('dragover');
+        }, false);
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files.length > 0) {
+          processOCRImage(files[0]);
+        }
+      }, false);
+    }
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (file) {
+        processOCRImage(file);
+      }
+    }
+
+    // Base64 file converter and Groq OCR dispatcher
+    function processOCRImage(file) {
+      const apiKey = localStorage.getItem('ow_tracker_groq_key');
+      if (!apiKey) {
+        showToast("Please enter and save your Groq API Key first!", "error");
+        return;
+      }
+
+      // Loader on
+      const loader = document.getElementById('ocrLoader');
+      loader.style.display = 'flex';
+      cancelScanReview(); // Hide any existing reviews
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = async function() {
+        const base64Data = reader.result.split(',')[1];
+        
+        try {
+          const result = await queryGroqOCR(base64Data, apiKey);
+          
+          if (result && result.matches && result.matches.length > 0) {
+            // Normalize outcomes before storing scannedMatches list
+            scannedMatches = result.matches.map(m => {
+              let finalOutcome = 'Defeat';
+              if (m.outcome === 'Victory' || m.outcome === '勝利' || m.outcome === 'Win') {
+                finalOutcome = 'Victory';
+              }
+              return {
+                map: m.map,
+                mode: m.mode,
+                outcome: finalOutcome,
+                score: m.score,
+                duration: m.duration
+              };
+            });
+
+            renderScanReview();
+            showToast(`Found ${scannedMatches.length} matches! Please review before importing.`, "success");
+          } else {
+            showToast("No matches could be detected in the screenshot.", "error");
+          }
+        } catch (err) {
+          console.error("Groq OCR Error:", err);
+          showToast("OCR failed: " + err.message, "error");
+        } finally {
+          loader.style.display = 'none';
+          document.getElementById('fileInput').value = '';
+        }
+      };
+    }
+
+    // API caller
+    async function queryGroqOCR(base64Image, apiKey) {
+      const promptText = `Analyze this Overwatch match history list screenshot. 
+It contains a list of multiple match records (under headers like "最新", "Latest", or in rows).
+Extract the details for ALL visible match rows in the list.
+
+The screenshot may be in Japanese or English. Parse cues in both languages:
+
+For each match row, extract:
+1. Map name: The map name written on the row (e.g. "NUMBANI", "ILIOS", "ROUTE 66", "EICHENWALDE", "RIALTO", "SURAVASA", "LIJIANG TOWER", etc.). Convert it to standard English Title Case (e.g., 'Numbani', 'Ilios', 'Route 66').
+2. Game Mode: Determine the game mode from the text and color cues:
+   - QP: If you see blue text containing "アンランク" (unranked), or black/gray text containing "クイックプレイ" / "クイック・プレイ" (quick play) or "オープンキュー" (open queue) under unranked sections, set mode to "QP". Also match English "Unranked" or "Quick Play".
+   - Ranked: If you see red text containing "ライバル・プレイ" (rival play), or black text containing "ロールキュー" (role queue) / "オープンキュー" (open queue) under ranked sections, set mode to "Ranked". Also match English "Competitive" or "Rival Play".
+   - Other: Default to "Other" if unclear.
+3. Duration: The duration of the match (e.g. "8:46", "9:13", "10:57", "11:54"). This is the match duration showing in the row (usually next to relative time like "2日前" or "2 days ago", in format MM:SS).
+4. Outcome: The match outcome. If it shows "勝利" or "Victory" or "Win" or green badge, set outcome to "Victory". If it shows "敗北" or "Defeat" or "Lose" or "Loss" or red badge, set outcome to "敗北".
+5. Score: The final score/result number showing (e.g. "0-1", "0-2", "3-0", "2-3" etc. usually next to Victory/Defeat text).
+
+Return ONLY a valid JSON object matching the schema below. Do not wrap the JSON object in markdown blocks (such as \`\`\`json). Do not return any other text.
+
+JSON Schema:
+{
+  "matches": [
+    {
+      "map": string,
+      "mode": "Ranked" | "QP" | "Other",
+      "outcome": "Victory" | "敗北",
+      "score": string,
+      "duration": string
+    }
+  ]
+}`;
+
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "meta-llama/llama-4-scout-17b-16e-instruct",
+          messages: [
+            {
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text: promptText
+                },
+                {
+                  type: "image_url",
+                  image_url: {
+                    url: `data:image/jpeg;base64,${base64Image}`
+                  }
+                }
+              ]
+            }
+          ]
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || `HTTP ${response.status}`);
+      }
+
+      const resJson = await response.json();
+      const content = resJson.choices?.[0]?.message?.content;
+      if (!content) {
+        throw new Error("Empty response from Groq OCR model");
+      }
+
+      // Cleanup response formatting in case model adds markdown blocks
+      let cleaned = content.trim();
+      if (cleaned.startsWith("```")) {
+        cleaned = cleaned.replace(/^```json\s*/, '').replace(/```$/, '').trim();
+      }
+
+      try {
+        return JSON.parse(cleaned);
+      } catch (e) {
+        console.error("OCR Output was not valid JSON:", content);
+        throw new Error("Llama output could not be parsed as JSON: " + content);
+      }
+    }
+
+    // Render the Scanned Matches Review Card
+    function renderScanReview() {
+      const tbody = document.getElementById('scanReviewTableBody');
+      const reviewCard = document.getElementById('scanReviewCard');
+      
+      tbody.innerHTML = scannedMatches.map((m, idx) => {
+        return `
+          <tr class="scan-review-row">
+            <td>
+              <input type="checkbox" class="scan-checkbox" data-index="${idx}" checked onchange="updateScanCount()">
+            </td>
+            <td>
+              <input type="text" class="scan-map" data-index="${idx}" value="${m.map || ''}" placeholder="Map" list="mapList">
+            </td>
+            <td>
+              <select class="scan-mode" data-index="${idx}">
+                <option value="Ranked" ${m.mode === 'Ranked' ? 'selected' : ''}>Ranked</option>
+                <option value="QP" ${m.mode === 'QP' ? 'selected' : ''}>QP</option>
+                <option value="Other" ${m.mode === 'Other' ? 'selected' : ''}>Other</option>
+              </select>
+            </td>
+            <td>
+              <select class="scan-outcome" data-index="${idx}">
+                <option value="Victory" ${m.outcome === 'Victory' ? 'selected' : ''}>Victory</option>
+                <option value="Defeat" ${m.outcome === 'Defeat' || m.outcome === '敗北' ? 'selected' : ''}>Defeat</option>
+              </select>
+            </td>
+            <td>
+              <input type="text" class="scan-score" data-index="${idx}" value="${m.score || ''}" placeholder="Score">
+            </td>
+            <td>
+              <input type="text" class="scan-duration" data-index="${idx}" value="${m.duration || ''}" placeholder="Duration">
+            </td>
+            <td>
+              <input type="text" class="scan-hero" data-index="${idx}" placeholder="e.g. Ana" list="heroList">
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      reviewCard.style.display = 'block';
+      document.getElementById('scanSeasonInput').value = currentSeason;
+      
+      updateScanCount();
+      
+      // Scroll review card into view
+      reviewCard.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function toggleSelectAllScan(selectAllCb) {
+      const checkboxes = document.querySelectorAll('.scan-checkbox');
+      checkboxes.forEach(cb => {
+        cb.checked = selectAllCb.checked;
+      });
+      updateScanCount();
+    }
+
+    function updateScanCount() {
+      const checkboxes = document.querySelectorAll('.scan-checkbox');
+      let count = 0;
+      checkboxes.forEach(cb => {
+        if (cb.checked) count++;
+      });
+      document.getElementById('scanCountText').innerText = count;
+    }
+
+    function cancelScanReview() {
+      document.getElementById('scanReviewCard').style.display = 'none';
+      document.getElementById('scanReviewTableBody').innerHTML = '';
+      scannedMatches = [];
+    }
+
+    // Import selected rows into match log
+    function importScannedMatches() {
+      const checkboxes = document.querySelectorAll('.scan-checkbox');
+      const importSeason = parseInt(document.getElementById('scanSeasonInput').value) || currentSeason;
+      
+      let addedCount = 0;
+      let skipCount = 0;
+
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          const idx = cb.getAttribute('data-index');
+          
+          // Get user adjustments from the table inputs
+          const mapVal = document.querySelector(`.scan-map[data-index="${idx}"]`).value.trim();
+          const modeVal = document.querySelector(`.scan-mode[data-index="${idx}"]`).value;
+          const outcomeVal = document.querySelector(`.scan-outcome[data-index="${idx}"]`).value;
+          const scoreVal = document.querySelector(`.scan-score[data-index="${idx}"]`).value.trim();
+          const durationVal = document.querySelector(`.scan-duration[data-index="${idx}"]`).value.trim();
+          const heroVal = document.querySelector(`.scan-hero[data-index="${idx}"]`).value.trim();
+
+          if (mapVal && scoreVal && durationVal) {
+            // Automatically calculate "Time of Match" on upload:
+            // Default to current datetime (new Date()), formatted for compatibility
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            const timeVal = now.toISOString();
+
+            const matchData = {
+              map: mapVal,
+              mode: modeVal,
+              outcome: outcomeVal,
+              score: scoreVal,
+              duration: durationVal,
+              season: importSeason,
+              time: timeVal,
+              hero: heroVal
+            };
+
+            const key = generateMatchKey(matchData);
+
+            if (!matches[key]) {
+              matches[key] = matchData;
+              addedCount++;
+            } else {
+              skipCount++;
+            }
+          }
+        }
+      });
+
+      if (addedCount > 0) {
+        saveMatchesToLocalStorage();
+        updateDashboard();
+        showToast(`Successfully imported ${addedCount} matches! (${skipCount} duplicates skipped)`, "success");
+      } else {
+        showToast(`No new matches imported. (${skipCount} duplicates skipped)`, "error");
+      }
+
+      // If season was modified during import, update state
+      if (importSeason !== currentSeason) {
+        currentSeason = importSeason;
+        localStorage.setItem('ow_tracker_current_season', currentSeason);
+        document.getElementById('formSeason').value = currentSeason;
+      }
+
+      cancelScanReview();
+    }
+  </script>
+</body>
+</html>
