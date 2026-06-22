@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Overwatch Match History Tracker</title>
-  
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap"
+    rel="stylesheet">
 
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -54,13 +57,16 @@
       width: 8px;
       height: 8px;
     }
+
     ::-webkit-scrollbar-track {
       background: var(--bg-main);
     }
+
     ::-webkit-scrollbar-thumb {
       background: #252836;
       border-radius: 4px;
     }
+
     ::-webkit-scrollbar-thumb:hover {
       background: #33384c;
     }
@@ -150,7 +156,8 @@
       width: 100%;
     }
 
-    input:focus, select:focus {
+    input:focus,
+    select:focus {
       border-color: var(--ow-orange);
       box-shadow: 0 0 0 2px rgba(249, 158, 26, 0.15);
     }
@@ -222,7 +229,7 @@
       border-radius: 12px;
       padding: 1.5rem;
       margin-bottom: 1.5rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     }
 
     .card-title {
@@ -278,7 +285,8 @@
       gap: 0.5rem;
     }
 
-    .dropzone:hover, .dropzone.dragover {
+    .dropzone:hover,
+    .dropzone.dragover {
       border-color: var(--ow-orange);
       background-color: rgba(249, 158, 26, 0.03);
     }
@@ -301,7 +309,7 @@
 
     .dropzone span {
       font-size: 0.75rem;
-      color: rgba(255,255,255,0.3);
+      color: rgba(255, 255, 255, 0.3);
     }
 
     .ocr-loader {
@@ -327,7 +335,9 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     /* Mode & Outcome Selector Buttons */
@@ -479,8 +489,13 @@
       font-weight: 700;
     }
 
-    .map-stat-rate.high-win { color: var(--victory-green); }
-    .map-stat-rate.low-win { color: var(--defeat-red); }
+    .map-stat-rate.high-win {
+      color: var(--victory-green);
+    }
+
+    .map-stat-rate.low-win {
+      color: var(--defeat-red);
+    }
 
     .win-loss-progress-bar {
       height: 6px;
@@ -513,7 +528,7 @@
     }
 
     .hero-stat-badge {
-      background: rgba(255,255,255,0.03);
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-color);
       border-radius: 20px;
       padding: 0.25rem 0.75rem;
@@ -646,7 +661,7 @@
       background: #1e202c;
       color: #fff;
       font-size: 0.9rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -672,8 +687,13 @@
 
     /* Form Flash Animation (from OCR filling) */
     @keyframes flash {
-      0% { background-color: rgba(249, 158, 26, 0.4); }
-      100% { background-color: transparent; }
+      0% {
+        background-color: rgba(249, 158, 26, 0.4);
+      }
+
+      100% {
+        background-color: transparent;
+      }
     }
 
     .flash-highlight {
@@ -686,11 +706,11 @@
       padding: 3rem 1rem;
       color: var(--text-secondary);
     }
-    
+
     .empty-state svg {
       width: 48px;
       height: 48px;
-      fill: rgba(255,255,255,0.1);
+      fill: rgba(255, 255, 255, 0.1);
       margin-bottom: 1rem;
     }
 
@@ -703,7 +723,7 @@
     }
 
     .hero-rec-btn {
-      background: rgba(255,255,255,0.03);
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-color);
       color: var(--text-secondary);
       font-size: 0.7rem;
@@ -726,7 +746,8 @@
       background-color: #171a24;
     }
 
-    .scan-review-row input, .scan-review-row select {
+    .scan-review-row input,
+    .scan-review-row select {
       background: var(--bg-main);
       border: 1px solid var(--border-color);
       color: var(--text-primary);
@@ -828,16 +849,18 @@
       }
 
       /* Prevent text wrapping in log tables */
-      table th, table td {
+      table th,
+      table td {
         padding: 0.5rem 0.75rem;
         white-space: nowrap;
       }
-      
+
       /* Review Scanned Matches inputs */
-      .scan-review-row input, .scan-review-row select {
+      .scan-review-row input,
+      .scan-review-row select {
         min-width: 100px;
       }
-      
+
       .scan-checkbox {
         width: 20px;
         height: 20px;
@@ -852,6 +875,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <div class="container">
@@ -859,7 +883,8 @@
       <div class="logo-container">
         <!-- SVG Overwatch Logo -->
         <svg class="logo-icon" viewBox="0 0 32 32">
-          <path d="M16 0C7.16 0 0 7.16 0 16c0 3.73 1.28 7.16 3.41 9.91l4.88-5.78C6.91 18.78 6.19 17.47 6.09 16c-.03-.41.03-1.78.22-2.19l9.69-4.22 9.69 4.22c.19.41.25 1.78.22 2.19-.1 1.47-.81 2.78-2.2 4.12l4.88 5.78C30.72 23.16 32 19.73 32 16c0-8.84-7.16-16-16-16zm-5.91 16.59c0-1.44 1.16-2.59 2.59-2.59h6.66c1.44 0 2.59 1.16 2.59 2.59v3.06l-5.92 7.02-5.92-7.02v-3.06z"/>
+          <path
+            d="M16 0C7.16 0 0 7.16 0 16c0 3.73 1.28 7.16 3.41 9.91l4.88-5.78C6.91 18.78 6.19 17.47 6.09 16c-.03-.41.03-1.78.22-2.19l9.69-4.22 9.69 4.22c.19.41.25 1.78.22 2.19-.1 1.47-.81 2.78-2.2 4.12l4.88 5.78C30.72 23.16 32 19.73 32 16c0-8.84-7.16-16-16-16zm-5.91 16.59c0-1.44 1.16-2.59 2.59-2.59h6.66c1.44 0 2.59 1.16 2.59 2.59v3.06l-5.92 7.02-5.92-7.02v-3.06z" />
         </svg>
         <h1>Overwatch History Tracker</h1>
       </div>
@@ -867,7 +892,8 @@
       <div class="api-key-section">
         <span id="apiKeyIndicator" class="api-key-status"></span>
         <div class="api-key-input-wrapper">
-          <input type="password" id="groqApiKeyInput" placeholder="Groq API Key" title="Enter Groq API Key to enable OCR scanner">
+          <input type="password" id="groqApiKeyInput" placeholder="Groq API Key"
+            title="Enter Groq API Key to enable OCR scanner">
         </div>
         <button class="btn" id="saveKeyBtn" onclick="saveApiKey()">Save</button>
       </div>
@@ -876,17 +902,21 @@
     <!-- Scan Results Review Card (shown when matches scanned) -->
     <div class="card" id="scanReviewCard" style="display: none;">
       <div class="card-title">
-        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+        </svg>
         Review Scanned Matches
       </div>
       <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
-        Review the matches extracted from your screenshot. You can tweak fields, choose which hero you played, and selectively import them below.
+        Review the matches extracted from your screenshot. You can tweak fields, choose which hero you played, and
+        selectively import them below.
       </p>
       <div class="table-container" style="margin-bottom: 1rem; max-height: 350px; overflow-y: auto;">
         <table>
           <thead>
             <tr>
-              <th style="width: 40px;"><input type="checkbox" id="selectAllScan" checked onchange="toggleSelectAllScan(this)"></th>
+              <th style="width: 40px;"><input type="checkbox" id="selectAllScan" checked
+                  onchange="toggleSelectAllScan(this)"></th>
               <th>Map</th>
               <th style="width: 110px;">Mode</th>
               <th style="width: 110px;">Outcome</th>
@@ -907,28 +937,33 @@
         </div>
         <div style="display: flex; gap: 0.5rem;">
           <button class="btn" onclick="cancelScanReview()">Cancel</button>
-          <button class="btn btn-primary" onclick="importScannedMatches()">Import Selected (<span id="scanCountText">0</span>)</button>
+          <button class="btn btn-primary" onclick="importScannedMatches()">Import Selected (<span
+              id="scanCountText">0</span>)</button>
         </div>
       </div>
     </div>
 
     <div class="dashboard-grid">
-      
+
       <!-- LEFT COLUMN: Forms / Uploads -->
       <aside>
         <!-- OCR Scanner Card -->
         <div class="card">
           <div class="card-title">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h3V2H4c-1.1 0-2 .9-2 2v3h2V4zm12-2h3c1.1 0 2 .9 2 2v3h-2V4h-3V2zM4 16H2v3c0 1.1.9 2 2 2h3v-2H4v-3zm16 3h-3v2h3c1.1 0 2-.9 2-2v-3h-2v3zm-8-9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zm6.3 3c-.18-3.33-2.82-5.97-6.15-6.15V5h-2v1.85C6.82 7.03 4.18 9.67 4 13H2v2h2c.18 3.33 2.82 5.97 6.15 6.15V23h2v-1.85c3.33-.18 5.97-2.82 6.15-6.15h2v-2h-2z"/></svg>
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M4 4h3V2H4c-1.1 0-2 .9-2 2v3h2V4zm12-2h3c1.1 0 2 .9 2 2v3h-2V4h-3V2zM4 16H2v3c0 1.1.9 2 2 2h3v-2H4v-3zm16 3h-3v2h3c1.1 0 2-.9 2-2v-3h-2v3zm-8-9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zm6.3 3c-.18-3.33-2.82-5.97-6.15-6.15V5h-2v1.85C6.82 7.03 4.18 9.67 4 13H2v2h2c.18 3.33 2.82 5.97 6.15 6.15V23h2v-1.85c3.33-.18 5.97-2.82 6.15-6.15h2v-2h-2z" />
+            </svg>
             Scan Screenshot
           </div>
-          
+
           <div class="dropzone" id="dropzone">
             <svg class="dropzone-icon" viewBox="0 0 24 24">
-              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+              <path
+                d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z" />
             </svg>
             <p>Drag & Drop match screenshot</p>
-            <span>or click to browse</span>
+            <span>or click to browse (or Ctrl+V to paste)</span>
           </div>
           <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFileSelect(event)">
 
@@ -941,7 +976,9 @@
         <!-- Add/Edit Match (Manual / OCR review) -->
         <div class="card">
           <div class="card-title">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
             <span id="formCardTitle">Track Match</span>
           </div>
 
@@ -956,17 +993,21 @@
               <div class="form-group">
                 <label>Game Mode</label>
                 <div class="toggle-group" id="formModeGroup">
-                  <button type="button" class="toggle-btn active" data-val="Ranked" onclick="setFormMode('Ranked')">Ranked</button>
+                  <button type="button" class="toggle-btn active" data-val="Ranked"
+                    onclick="setFormMode('Ranked')">Ranked</button>
                   <button type="button" class="toggle-btn" data-val="QP" onclick="setFormMode('QP')">QP</button>
-                  <button type="button" class="toggle-btn" data-val="Other" onclick="setFormMode('Other')">Other</button>
+                  <button type="button" class="toggle-btn" data-val="Other"
+                    onclick="setFormMode('Other')">Other</button>
                 </div>
               </div>
 
               <div class="form-group">
                 <label>Outcome</label>
                 <div class="toggle-group" id="formOutcomeGroup">
-                  <button type="button" class="toggle-btn active" data-val="Victory" onclick="setFormOutcome('Victory')">Win</button>
-                  <button type="button" class="toggle-btn" data-val="Defeat" onclick="setFormOutcome('Defeat')">Loss</button>
+                  <button type="button" class="toggle-btn active" data-val="Victory"
+                    onclick="setFormOutcome('Victory')">Win</button>
+                  <button type="button" class="toggle-btn" data-val="Defeat"
+                    onclick="setFormOutcome('Defeat')">Loss</button>
                 </div>
               </div>
             </div>
@@ -998,7 +1039,7 @@
                 <label for="formHero">Hero Played</label>
                 <input type="text" id="formHero" placeholder="e.g. Ana" list="heroList">
                 <datalist id="heroList"></datalist>
-                
+
                 <div class="hero-recommend-list" id="heroRecommendations">
                   <!-- JS populated -->
                 </div>
@@ -1006,7 +1047,8 @@
             </div>
 
             <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-              <button type="button" id="cancelEditBtn" class="btn btn-danger" style="display: none; flex: 1;" onclick="resetForm()">
+              <button type="button" id="cancelEditBtn" class="btn btn-danger" style="display: none; flex: 1;"
+                onclick="resetForm()">
                 Cancel
               </button>
               <button type="submit" id="submitBtn" class="btn btn-primary" style="flex: 2; padding: 0.75rem;">
@@ -1023,13 +1065,17 @@
         <div class="card">
           <div class="stats-header-bar" style="border-bottom: none; margin-bottom: 0.5rem; padding-bottom: 0;">
             <div class="card-title" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
-              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
+              </svg>
               Match Analysis
             </div>
           </div>
 
           <!-- Extended Filter Grid -->
-          <div class="filters-grid" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
+          <div class="filters-grid"
+            style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
             <div>
               <label for="filterSeason">Season</label>
               <select id="filterSeason" onchange="updateDashboard()">
@@ -1088,13 +1134,17 @@
           </div>
 
           <!-- Map Win Rate Breakdowns -->
-          <h3 style="font-size: 1rem; margin-bottom: 0.75rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px;">Map Win Rates</h3>
+          <h3
+            style="font-size: 1rem; margin-bottom: 0.75rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px;">
+            Map Win Rates</h3>
           <div class="map-stats-container" id="mapStatsContainer">
             <!-- JS populated -->
           </div>
 
           <!-- Hero Played Stats -->
-          <h3 style="font-size: 1rem; margin: 1.25rem 0 0.75rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px;">Hero Performance</h3>
+          <h3
+            style="font-size: 1rem; margin: 1.25rem 0 0.75rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px;">
+            Hero Performance</h3>
           <div class="hero-stats-container" id="heroStatsContainer">
             <!-- JS populated -->
           </div>
@@ -1104,7 +1154,7 @@
         <div class="card" id="chartCard" style="display: none;">
           <div class="card-title">
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+              <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z" />
             </svg>
             Win Rate Progression
           </div>
@@ -1117,20 +1167,31 @@
         <div class="card">
           <div class="history-header">
             <div class="card-title" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
-              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" />
+              </svg>
               Match History Log
             </div>
 
             <div class="history-controls">
-              <input type="text" id="historySearch" class="search-input" placeholder="Search Map or Hero..." oninput="updateDashboard()">
-              
+              <input type="text" id="historySearch" class="search-input" placeholder="Search Map or Hero..."
+                oninput="updateDashboard()">
+
               <button class="btn" onclick="exportMatches()" title="Export match history to JSON">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z" />
+                </svg>
                 Export
               </button>
 
-              <button class="btn" onclick="document.getElementById('importInput').click()" title="Import match history from JSON">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 15l-7-7-7 7h4v3h6v-3h4z"/></svg>
+              <button class="btn" onclick="document.getElementById('importInput').click()"
+                title="Import match history from JSON">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 15l-7-7-7 7h4v3h6v-3h4z" />
+                </svg>
                 Import
               </button>
               <input type="file" id="importInput" accept=".json" style="display:none" onchange="importMatches(event)">
@@ -1158,7 +1219,8 @@
             </table>
             <div id="emptyHistoryState" class="empty-state">
               <svg viewBox="0 0 24 24">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2z"/>
+                <path
+                  d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2z" />
               </svg>
               <p>No matches recorded yet</p>
               <span style="font-size: 0.8rem;">Add a match manually or upload a screenshot to begin tracking.</span>
@@ -1177,20 +1239,20 @@
   <script>
     // List of standard Overwatch 2 maps for datalist autocomplete
     const OW_MAPS = [
-      "Blizzard World", "Busan", "Circuit Royal", "Colosseo", "Dorado", "Eichenwalde", 
-      "Esperança", "Hanaoka", "Havana", "Hollywood", "Ilios", "Junkertown", 
-      "King's Row", "Lijiang Tower", "Midtown", "Nepal", "New Junk City", "New Queen Street", 
-      "Numbani", "Oasis", "Paraíso", "Peninsula", "Rialto", "Route 66", "Runasapi", 
+      "Blizzard World", "Busan", "Circuit Royal", "Colosseo", "Dorado", "Eichenwalde",
+      "Esperança", "Hanaoka", "Havana", "Hollywood", "Ilios", "Junkertown",
+      "King's Row", "Lijiang Tower", "Midtown", "Nepal", "New Junk City", "New Queen Street",
+      "Numbani", "Oasis", "Paraíso", "Peninsula", "Rialto", "Route 66", "Runasapi",
       "Samoa", "Shambali Monastery", "Suravasa", "Throne of Anubis", "Watchpoint: Gibraltar"
     ];
 
     // List of standard Overwatch 2 heroes
     const OW_HEROES = [
-      "Ana", "Ashe", "Baptiste", "Bastion", "Brigitte", "Cassidy", "D.Va", "Doomfist", 
-      "Echo", "Genji", "Hanzo", "Illari", "Jumper Queen", "Juno", "Junkrat", "Kiriko", 
-      "Lifeweaver", "Lúcio", "Mauga", "Mei", "Mercy", "Moira", "Orisa", "Pharah", 
-      "Ramattra", "Reaper", "Reinhardt", "Roadhog", "Sigma", "Sojourn", "Soldier: 76", 
-      "Sombra", "Symmetra", "Torbjörn", "Tracer", "Venture", "Widowmaker", "Winston", 
+      "Ana", "Ashe", "Baptiste", "Bastion", "Brigitte", "Cassidy", "D.Va", "Doomfist",
+      "Echo", "Genji", "Hanzo", "Illari", "Jumper Queen", "Juno", "Junkrat", "Kiriko",
+      "Lifeweaver", "Lúcio", "Mauga", "Mei", "Mercy", "Moira", "Orisa", "Pharah",
+      "Ramattra", "Reaper", "Reinhardt", "Roadhog", "Sigma", "Sojourn", "Soldier: 76",
+      "Sombra", "Symmetra", "Torbjörn", "Tracer", "Venture", "Widowmaker", "Winston",
       "Wrecking Ball", "Zarya", "Zenyatta"
     ];
 
@@ -1243,6 +1305,9 @@
 
       // Setup Drag & Drop listeners
       setupDragAndDrop();
+
+      // Setup Clipboard Paste listener
+      setupClipboardPaste();
     });
 
     // Populate Autocomplete maps and heroes lists
@@ -1260,7 +1325,7 @@
     // Pre-populate hero recommendations based on frequent play
     function renderHeroRecommendations() {
       const recContainer = document.getElementById('heroRecommendations');
-      
+
       // Calculate most played heroes
       const heroCounts = {};
       Object.values(matches).forEach(m => {
@@ -1270,12 +1335,12 @@
       });
 
       // Get top 4 heroes or fallback to popular support/tank/damage defaults
-      let topHeroes = Object.keys(heroCounts).sort((a,b) => heroCounts[b] - heroCounts[a]).slice(0, 4);
+      let topHeroes = Object.keys(heroCounts).sort((a, b) => heroCounts[b] - heroCounts[a]).slice(0, 4);
       if (topHeroes.length === 0) {
         topHeroes = ["Ana", "Reinhardt", "Genji", "Tracer"];
       }
 
-      recContainer.innerHTML = topHeroes.map(hero => 
+      recContainer.innerHTML = topHeroes.map(hero =>
         `<button type="button" class="hero-rec-btn" onclick="selectHero('${hero}')">${hero}</button>`
       ).join('');
     }
@@ -1363,10 +1428,10 @@
       const outcomeClean = (match.outcome || '').trim().toLowerCase();
       const scoreClean = (match.score || '').trim().toLowerCase();
       const seasonClean = String(match.season || '').trim().toLowerCase();
-      
+
       // Mix all properties
       const rawString = `${mapClean}|${modeClean}|${durationClean}|${outcomeClean}|${scoreClean}|${seasonClean}`;
-      
+
       // Standard safe base64 encoding (string64)
       return btoa(unescape(encodeURIComponent(rawString)));
     }
@@ -1406,12 +1471,12 @@
           showToast("Duplicate detected: Another match already has identical properties!", "error");
           return;
         }
-        
+
         // Remove old entry if key changed
         if (matchKey !== editingKey) {
           delete matches[editingKey];
         }
-        
+
         matches[matchKey] = matchData;
         showToast("Match successfully updated!", "success");
       } else {
@@ -1469,12 +1534,12 @@
       document.getElementById('formScore').value = m.score;
       document.getElementById('formDuration').value = m.duration || '';
       document.getElementById('formSeason').value = m.season;
-      
+
       // Convert stored datetime to datetime-local friendly format
       if (m.time) {
         document.getElementById('formTime').value = m.time.substring(0, 16);
       }
-      
+
       document.getElementById('formHero').value = m.hero || '';
 
       editingKey = key;
@@ -1535,18 +1600,18 @@
     // Calculate lists & stats, update tables and dropdown selections
     function updateDashboard() {
       const matchArray = Object.entries(matches).map(([key, data]) => ({ key, ...data }));
-      
+
       // Gather all unique seasons to populate season list
       const seasonsSet = new Set();
       matchArray.forEach(m => {
         if (m.season) seasonsSet.add(m.season);
       });
-      
+
       const filterSeasonSelect = document.getElementById('filterSeason');
       const prevSelectedSeason = filterSeasonSelect.value;
-      
+
       filterSeasonSelect.innerHTML = '<option value="all">All Seasons</option>';
-      const sortedSeasons = Array.from(seasonsSet).sort((a,b) => b - a);
+      const sortedSeasons = Array.from(seasonsSet).sort((a, b) => b - a);
       sortedSeasons.forEach(seasonNum => {
         filterSeasonSelect.innerHTML += `<option value="${seasonNum}">Season ${seasonNum}</option>`;
       });
@@ -1576,16 +1641,16 @@
         const matchesMap = activeMapFilter === 'all' || m.map === activeMapFilter;
         // Hero filter
         const matchesHero = activeHeroFilter === 'all' || m.hero === activeHeroFilter;
-        
+
         // Date Range filters
         const matchDateString = m.time ? m.time.substring(0, 10) : '';
         const matchesStartDate = !startDateVal || matchDateString >= startDateVal;
         const matchesEndDate = !endDateVal || matchDateString <= endDateVal;
-        
+
         // General text search filter (search bar)
-        const matchesSearch = !searchQuery || 
-                              (m.map || '').toLowerCase().includes(searchQuery) || 
-                              (m.hero || '').toLowerCase().includes(searchQuery);
+        const matchesSearch = !searchQuery ||
+          (m.map || '').toLowerCase().includes(searchQuery) ||
+          (m.hero || '').toLowerCase().includes(searchQuery);
 
         return matchesSeason && matchesMode && matchesMap && matchesHero && matchesStartDate && matchesEndDate && matchesSearch;
       });
@@ -1647,7 +1712,7 @@
         const rate = Math.round((data.wins / data.total) * 100);
         const winPercent = data.total > 0 ? (data.wins / data.total) * 100 : 0;
         const lossPercent = data.total > 0 ? (data.losses / data.total) * 100 : 0;
-        
+
         let winRateClass = '';
         if (rate >= 60) winRateClass = 'high-win';
         if (rate <= 40) winRateClass = 'low-win';
@@ -1684,7 +1749,7 @@
         else if (m.outcome === 'Defeat') heroData[hero].losses++;
       });
 
-      const sortedHeroes = Object.entries(heroData).sort((a,b) => b[1].total - a[1].total);
+      const sortedHeroes = Object.entries(heroData).sort((a, b) => b[1].total - a[1].total);
       const container = document.getElementById('heroStatsContainer');
 
       if (sortedHeroes.length === 0) {
@@ -1718,14 +1783,14 @@
       emptyState.style.display = 'none';
 
       // Sort matches by time, descending (newest matches first)
-      const sortedMatches = filteredMatches.sort((a,b) => new Date(b.time) - new Date(a.time));
+      const sortedMatches = filteredMatches.sort((a, b) => new Date(b.time) - new Date(a.time));
 
       tbody.innerHTML = sortedMatches.map(m => {
         const matchDate = new Date(m.time);
-        const formattedDate = matchDate.toLocaleDateString() + ' ' + matchDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        
-        const outcomeBadge = m.outcome === 'Victory' 
-          ? `<span class="badge badge-victory">Victory</span>` 
+        const formattedDate = matchDate.toLocaleDateString() + ' ' + matchDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        const outcomeBadge = m.outcome === 'Victory'
+          ? `<span class="badge badge-victory">Victory</span>`
           : `<span class="badge badge-defeat">Defeat</span>`;
 
         const modeClass = m.mode === 'Ranked' ? 'ranked' : (m.mode === 'QP' ? 'qp' : '');
@@ -1742,7 +1807,7 @@
             <td>${outcomeBadge}</td>
             <td style="font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size:1.05rem;">${m.score}</td>
             <td>${m.duration || '--'}</td>
-            <td>${heroContent}</td>
+            <td title="Double click to edit hero" style="cursor: pointer;" ondblclick="makeHeroEditable(this, '${m.key}')">${heroContent}</td>
             <td style="text-align: right; white-space: nowrap;">
               <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-right: 0.25rem;" onclick="startEditMatch('${m.key}')">
                 Edit
@@ -1756,17 +1821,67 @@
       }).join('');
     }
 
+    // Double click to inline edit hero
+    function makeHeroEditable(tdElement, key) {
+      if (tdElement.querySelector('input')) return;
+
+      const match = matches[key];
+      if (!match) return;
+
+      const currentHero = match.hero || '';
+
+      tdElement.innerHTML = `
+        <input type="text" class="inline-hero-edit-input" value="${currentHero}" 
+          list="heroList" style="width: 110px; padding: 0.25rem; font-size: 0.85rem; 
+          background: var(--bg-main); border: 1px solid var(--ow-orange); color: var(--text-primary); 
+          border-radius: 4px; outline: none;">
+      `;
+
+      const input = tdElement.querySelector('input');
+      input.focus();
+      input.select();
+
+      let isSaved = false;
+      function saveEdit() {
+        if (isSaved) return;
+        isSaved = true;
+
+        const newValue = input.value.trim();
+        if (newValue !== currentHero) {
+          match.hero = newValue;
+          saveMatchesToLocalStorage();
+          showToast(`Updated hero to ${newValue || 'None'}!`, "success");
+        }
+        updateDashboard();
+      }
+
+      input.addEventListener('blur', () => {
+        saveEdit();
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          saveEdit();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          isSaved = true;
+          updateDashboard();
+        }
+      });
+    }
+
     // JSON Export
     function exportMatches() {
       if (Object.keys(matches).length === 0) {
         showToast("No matches to export!", "error");
         return;
       }
-      
+
       const jsonStr = JSON.stringify(matches, null, 2);
       const blob = new Blob([jsonStr], { type: "application/json" });
       const url = URL.createObjectURL(blob);
-      
+
       const link = document.createElement("a");
       link.href = url;
       link.download = `overwatch_matches_history_season_${currentSeason}.json`;
@@ -1783,7 +1898,7 @@
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         try {
           const imported = JSON.parse(e.target.result);
           if (typeof imported !== 'object' || imported === null) {
@@ -1795,7 +1910,7 @@
 
           Object.keys(imported).forEach(key => {
             const data = imported[key];
-            
+
             // Basic validation
             if (data.map && data.mode && data.outcome && data.score) {
               // Normalize outcome values on import
@@ -1878,6 +1993,24 @@
       }, false);
     }
 
+    // Clipboard paste support for scanning screenshots
+    function setupClipboardPaste() {
+      document.addEventListener('paste', (e) => {
+        const clipboardItems = (e.clipboardData || window.clipboardData).items;
+        for (let i = 0; i < clipboardItems.length; i++) {
+          if (clipboardItems[i].type.indexOf('image') !== -1) {
+            const file = clipboardItems[i].getAsFile();
+            if (file) {
+              e.preventDefault(); // Prevent pasting raw base64 data into focused text inputs
+              showToast("Pasting image from clipboard...", "success");
+              processOCRImage(file);
+            }
+            break;
+          }
+        }
+      });
+    }
+
     function handleFileSelect(event) {
       const file = event.target.files[0];
       if (file) {
@@ -1900,13 +2033,14 @@
 
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onloadend = async function() {
+      reader.onloadend = async function () {
         const base64Data = reader.result.split(',')[1];
-        
+
         try {
           const result = await queryGroqOCR(base64Data, apiKey);
-          
+
           if (result && result.matches && result.matches.length > 0) {
+            console.log('result', result)
             // Normalize outcomes before storing scannedMatches list
             scannedMatches = result.matches.map(m => {
               let finalOutcome = 'Defeat';
@@ -2027,7 +2161,7 @@ JSON Schema:
     function renderScanReview() {
       const tbody = document.getElementById('scanReviewTableBody');
       const reviewCard = document.getElementById('scanReviewCard');
-      
+
       tbody.innerHTML = scannedMatches.map((m, idx) => {
         return `
           <tr class="scan-review-row">
@@ -2065,9 +2199,9 @@ JSON Schema:
 
       reviewCard.style.display = 'block';
       document.getElementById('scanSeasonInput').value = currentSeason;
-      
+
       updateScanCount();
-      
+
       // Scroll review card into view
       reviewCard.scrollIntoView({ behavior: 'smooth' });
     }
@@ -2099,14 +2233,14 @@ JSON Schema:
     function importScannedMatches() {
       const checkboxes = document.querySelectorAll('.scan-checkbox');
       const importSeason = parseInt(document.getElementById('scanSeasonInput').value) || currentSeason;
-      
+
       let addedCount = 0;
       let skipCount = 0;
 
       checkboxes.forEach(cb => {
         if (cb.checked) {
           const idx = cb.getAttribute('data-index');
-          
+
           // Get user adjustments from the table inputs
           const mapVal = document.querySelector(`.scan-map[data-index="${idx}"]`).value.trim();
           const modeVal = document.querySelector(`.scan-mode[data-index="${idx}"]`).value;
@@ -2169,9 +2303,9 @@ JSON Schema:
     function renderWinrateChart(filteredMatches) {
       const ctx = document.getElementById('winrateChart');
       if (!ctx) return;
-      
+
       const chartCard = document.getElementById('chartCard');
-      
+
       if (filteredMatches.length === 0) {
         chartCard.style.display = 'none';
         return;
@@ -2192,10 +2326,10 @@ JSON Schema:
         total++;
         if (m.outcome === 'Victory') wins++;
         const rate = Math.round((wins / total) * 100);
-        
+
         labels.push(`#${total} ${m.map}`);
         winrates.push(rate);
-        
+
         tooltipData.push({
           map: m.map,
           mode: m.mode,
@@ -2255,7 +2389,7 @@ JSON Schema:
               },
               ticks: {
                 color: '#8e98a8',
-                callback: function(value) { return value + '%'; },
+                callback: function (value) { return value + '%'; },
                 font: {
                   family: 'Inter'
                 }
@@ -2284,12 +2418,12 @@ JSON Schema:
               padding: 10,
               displayColors: false,
               callbacks: {
-                title: function(context) {
+                title: function (context) {
                   const idx = context[0].dataIndex;
                   const data = tooltipData[idx];
                   return `${data.outcome === 'Victory' ? 'Victory' : 'Defeat'} - ${data.map} (${data.mode})`;
                 },
-                label: function(context) {
+                label: function (context) {
                   const idx = context.dataIndex;
                   const data = tooltipData[idx];
                   return [
@@ -2308,4 +2442,5 @@ JSON Schema:
     }
   </script>
 </body>
+
 </html>
